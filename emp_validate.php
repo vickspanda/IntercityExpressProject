@@ -11,7 +11,7 @@
 
   $servername = 'localhost';
   $dbuser = 'postgres';
-  $dbpass = 'Vicks1428';
+  $dbpass = 'Vick$1428';
   $db = 'intercityexpress';
 
 // Create connection
@@ -20,6 +20,9 @@
   //Validation of the Username and Password;
   $emp_username = $_POST["emp_username"];
   $emp_password = $_POST["emp_password"];
+  if(!$emp_username)  {
+    echo '<script>window.alert("Login to the System First !!!"); window.location.href="emp_login.html"</script>';
+  }
   
 
   $validate_username = "select username from admin where username='$emp_username';";

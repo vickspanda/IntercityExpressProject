@@ -1,8 +1,8 @@
 <?php
     session_start();
-    $pass_username = $_SESSION["reset_username"];
-    if(!$pass_username)  {
-        echo '<script>window.alert("Login to the System First !!!"); window.location.href="forgot_pass.html"</script>';
+    $ta_username = $_SESSION["reset_ta_username"];
+    if(!$ta_username)  {
+        echo '<script>window.alert("Login to the System First !!!"); window.location.href="forgot_ta.html"</script>';
       }
 ?>
 
@@ -41,15 +41,15 @@
         </nav>
         <div class="background"></div>
         <div class="login_form">
-            <form id="signUpForm" method="post" action="update_pass.php">
+            <form id="signUpForm" method="post" action="update_ta.php">
                 <br><br>
                 <div class="lbl2">
                     <label>Reset Password</label><br><br><br>
                 </div>
                 <div class="credentials_forgot">
-                    <input type="username" name="pass_username" placeholder="<?php echo $pass_username;?>" required readonly>
+                    <input type="username" name="ta_username" placeholder="<?php echo $ta_username;?>" required readonly>
                     <br><br><br>
-                    <input type="password" name="pass_password" placeholder="New Password" id="pass_password" required>
+                    <input type="password" name="ta_password" placeholder="New Password" id="ta_password" required>
                     <br>
                     <span class="error" id="passwordError">Password should be more than 8 characters</span>
                     <br><br>
@@ -69,7 +69,7 @@
             let isValid = true;
 
             // Validate Password
-            const password = document.getElementById("pass_password");
+            const password = document.getElementById("ta_password");
             const passwordError = document.getElementById("passwordError");
             const confirmPassword = document.getElementById("confirm_password");
             const confirmPasswordError = document.getElementById("confirmPasswordError");
@@ -95,8 +95,8 @@
             }
         });
 
-        document.getElementById("pass_password").addEventListener("input", function() {
-        const password = document.getElementById("pass_password");
+        document.getElementById("ta_password").addEventListener("input", function() {
+        const password = document.getElementById("ta_password");
         const passwordError = document.getElementById("passwordError");
         if (password.value.length < 8) {
                 password.classList.add("invalid");
@@ -109,7 +109,7 @@
     });
 
     document.getElementById("confirm_password").addEventListener("input", function() {
-        const password = document.getElementById("pass_password");
+        const password = document.getElementById("ta_password");
             const passwordError = document.getElementById("passwordError");
             const confirmPassword = document.getElementById("confirm_password");
             const confirmPasswordError = document.getElementById("confirmPasswordError");

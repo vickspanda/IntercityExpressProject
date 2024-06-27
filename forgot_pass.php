@@ -1,57 +1,61 @@
 <?php
+session_start();
 
-  echo "<!DOCTYPE html>
-  <head>
-    <title>Authenticating ...</title>
-  </head>
-  <body>
-    
-  </body>
-  </html>";
-  
-  $servername = 'localhost';
-  $dbuser = 'postgres';
-  $dbpass = 'Vicks1428';
-  $db = 'intercityexpress';
+echo "<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <title>Authenticating ...</title>
+</head>
+<body>
+</body>
+</html>";
+
+$servername = 'localhost';
+$dbuser = 'postgres';
+$dbpass = 'Vick$1428';
+$db = 'intercityexpress';
 
 // Create connection
-  $conn = pg_connect("host=$servername dbname=$db user=$dbuser password=$dbpass");
+$conn = pg_connect("host=$servername dbname=$db user=$dbuser password=$dbpass");
 
-  //Validation of the Username and Password;
-  $pass_username = $_POST["pass_username"];
-  $pass_secq = $_POST["pass_secq"];
-  $pass_seca = $_POST["pass_seca"];
-  
-  $validate_username = "select username from passenger where username='$pass_username';";
-  $user_query = pg_query($conn,$validate_username);
-  $pass_username_db = pg_fetch_row($user_query);
+if (!$conn) {
+  die("Connection failed: " . pg_last_error());
+}
 
-  if($pass_username_db[0]!= $pass_username)
-  {
-    echo '<script>window.alert("Entered username not found !!!"); window.location.href="forgot_pass.html"</script>';
-  }
+// Validation of the Username and Password;
+$pass_username = $_POST["pass_username"] ?? '';
+if (!$pass_username) {
+  echo '<script>window.alert("Login to the System First !!!"); window.location.href="forgot_pass.html"</script>';
+  exit;
+}
 
-  $validate_secq = "select sec_ques from passenger where username='$pass_username';";
-  $secq_query = pg_query($conn,$validate_secq);
-  $pass_secq_db = pg_fetch_row($secq_query);
+$pass_secq = $_POST["pass_secq"] ?? '';
+$pass_seca = $_POST["pass_seca"] ?? '';
 
-  if($pass_secq_db[0]!= $pass_secq)
-  {
+// Validate the username and retrieve security question and answer
+$validate_username_query = "SELECT username, sec_ques, sec_ans FROM passenger WHERE username = $1";
+$result = pg_query_params($conn, $validate_username_query, array($pass_username));
+
+if ($result && pg_num_rows($result) > 0) {
+  $row = pg_fetch_assoc($result);
+  $pass_secq_db = $row['sec_ques'];
+
+  if (password_verify($pass_secq, $pass_secq_db)) {
+    $pass_seca_db = $row['sec_ans'];
+    // Verify the security answer
+    if (password_verify($pass_seca, $pass_seca_db)) {
+      $_SESSION["reset_username"] = $pass_username;
+      echo '<script>window.alert("Validated Successfully !!!"); window.location.href="reset_pass.php"</script>';
+    } else {
+      echo '<script>window.alert("You have entered wrong security answer !!!"); window.location.href="forgot_pass.html"</script>'; 
+    }
+  } else {
     echo '<script>window.alert("Security Question not matched with the given username !!!"); window.location.href="forgot_pass.html"</script>';
   }
+} else {
+  echo '<script>window.alert("Entered username not found !!!"); window.location.href="passenger_login.html";</script>';
+}
 
-  $get_pass_seca = "SELECT sec_ans from passenger where username='$pass_username';";
-  $seca_query = pg_query($conn,$get_pass_seca);
-  $pass_seca_db = pg_fetch_row($seca_query);
-  
-  if($pass_seca_db[0]==$pass_seca){
-    session_start();
-    $_SESSION["reset_username"] = $pass_username;
-    echo '<script>window.alert("Validated Successfully !!!"); window.location.href="reset_pass.php  "</script>';
-    
-  }
-  else{
-    echo '<script>window.alert("You have entered wrong security answer !!!"); window.location.href="forgot_pass.html"</script>';   
-  }
+pg_close($conn);
 ?>
-

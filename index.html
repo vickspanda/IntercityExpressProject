@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="home.css">
+    <title>Intercity Express</title>
+</head>
+<body>
+    <nav>
+
+        
+        <img src="logo.png" class="img" alt="logo">
+
+
+        <ul>
+            <li><a href="home.html">HOME</a></li>
+            <li><a href="#">ABOUT</a></li>
+            <li><a href="ta_login.html">AGENT</a></li>
+            <li><a href="emp_login.html">EMPLOYEE</a></li>
+            <li><a href="passenger_login.html">PASSENGER</a></li>
+            <li><a href="#">FACILITIES</a></li>
+            <li><a href="#">SCHEDULE</a></li>
+            <li><a href="#">CONTACT</a></li>
+        </ul>
+    </nav>
+    <div class="background"></div>
+    <div class="search_form">
+        <form action="search_train.php">
+            <br><br>
+            <div class="home_lbl1">
+                <label>Book Ticket</label><br><br><br>
+            </div>
+            <div class="stations">
+                <input type="text" placeholder="From" autofocus required>
+                <br><br><br>
+                <input type="text" placeholder="To" required>
+                <br><br><br>
+            </div>
+            <div class="DOJ">
+                <input type="text" placeholder="Date of Journey" onfocus="(this.type='Date')" onblur="(this.type='text')">
+                <select class="coaches">
+                    <option disabled hidden selected>All Classes</option>
+                    <option value="AC Chair Car">AC Chair Car</option>
+                    <option value="2S Sitting Car">2S Sitting Car</option>
+                </select>
+            </div>
+            <br><br>
+            <div class="search">
+                <input type="submit" value="Search">
+                <br><br><br>
+            </div>
+    </div>
+    
+</body>
+</html>

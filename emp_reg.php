@@ -1,6 +1,9 @@
 <?php
     session_start();
     $ad_username = $_SESSION["admin_username"];
+    if(!$ad_username)  {
+        echo '<script>window.alert("Login to the System First !!!"); window.location.href="admin_login.html"</script>';
+    }
 ?>
 
 <!DOCTYPE html>
@@ -10,11 +13,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="emp_reg.css">
     <title>Employee Admission</title>
+    <style>
+        .error {
+            color: white;
+            font-size: 15px;
+        }
+        .error-border {
+            border-color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="bg-image"></div>
     <div class="create_account">
-        <form action="sign_up.php" method="post">
+        <form id="employeeForm" action="emp_sign_up.php" method="post">
             <br>
             <div class="heading">
                 <label>Employee Admission</label>
@@ -23,11 +35,13 @@
         <footer>
             <div class="col1">
                 <div class="fields1">
-                    <input type="name" placeholder="Full Name" autofocus required><br><br>
-                    <input type="text" placeholder="Residential Address" required><br><br>
+                    <input type="text" id="fullName" name="fullName" placeholder="Full Name" autofocus required><br>
+                    <span id="fullNameError" class="error"></span><br>
+                    <input type="text" id="address" name="address" placeholder="Residential Address" required><br>
+                    <span id="addressError" class="error"></span><br>
                 </div>
                 <div class="drop_down">
-                    <select id="state" class="state" required>
+                    <select id="state" name="state" class="state" required>
                         <option value="" disabled selected hidden>Select State</option>
                         <option>Andaman and Nicobar Islands</option>
                         <option>Andhra Pradesh</option>
@@ -66,12 +80,321 @@
                         <option>Uttar Pradesh</option>
                         <option>West Bengal</option>
                     </select>
-                    <select id="district" class="district">
+                    <span id="stateError" class="error"></span>
+                    <select id="district" name="district" class="district" required>
                         <option value="" disabled selected hidden>Select District</option>
                     </select>
-                    <script>
-                        const districts = {
-                            "Andaman and Nicobar Islands" : ["Nicobar","North and Middle Andaman","South Andaman" ],
+                    <span id="districtError" class="error"></span> 
+                    <input type="text" id="pinCode" name="pinCode" placeholder="Pin Code" required><br>
+                    <span id="pinCodeError" class="error"></span><br>
+                </div>
+                <div class="fields2">
+                    <div class="DOB">
+                        <input type="text" id="dob" name="dob" placeholder="Date of Birth" onfocus="(this.type='Date')" onblur="(this.type='text')"><br>
+                        <span id="dobError" class="error"></span><br>
+                    </div>
+                    <input type="text" id="mobile" name="mobile" placeholder="Mobile Number"><br>
+                    <span id="mobileError" class="error"></span><br>
+                    <input type="email" id="email" name="email" placeholder="Email Id" required><br>
+                    <span id="emailError" class="error"></span><br>
+                </div>
+
+                <div class="fields3">
+                    <input type="radio" value="Male" name="gender" id="male" required>
+                    <label for="male">Male</label>
+                    <input type="radio" value="Female" name="gender" id="female" required>
+                    <label for="female">Female</label>
+                    <span id="genderError" class="error"></span><br>
+                </div>
+            </div>
+            <div class="col2">
+                <div class="fields1">
+                    <div class="DOB">
+                        <select id="qualification" name="qualification" class="qual" required>
+                            <option value="" disabled selected hidden>Qualification</option>
+                            <option>Matriculation</option>
+                            <option>Intermediate</option>
+                            <option>Graduate</option>
+                            <option>Post Graduate</option>
+                            <option>Ph.D</option>
+                        </select><br>
+                        <span id="qualificationError" class="error"></span><br>
+                        <input type="text" id="doj" name="doj" placeholder="Date of Joining" onfocus="(this.type='Date')" onblur="(this.type='text')"><br>
+                        <span id="dojError" class="error"></span><br>
+                    </div>
+                </div>
+                <div class="fields1">
+                    <select id="govtId" name="govtId" class="govt_id" required>
+                        <option value="" disabled selected hidden>Select Government ID</option>
+                        <option>Aadhar</option>
+                        <option>Driving Licence</option>
+                        <option>Elector Photo Identity Card</option>
+                        <option>PAN</option>
+                    </select><br>
+                    <span id="govtIdError" class="error"></span><br>
+                    <input type="text" id="idNumber" name="idNumber" placeholder="ID Number" required><br>
+                    <span id="idNumberError" class="error"></span><br>
+                    <select id="designation" name="designation" class="designation" required>
+                        <option value="" disabled selected hidden>Designation</option>
+                        <option>Loco-Pilot</option>
+                    </select><br>
+                    <span id="designationError" class="error"></span><br>
+                    <input type="password" id="password" name="password" placeholder="Create Password" required><br>
+                    <span id="passwordError" class="error"></span><br>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required><br>
+                    <span id="confirmPasswordError" class="error"></span><br>
+                </div>
+            </div>
+        </footer>
+            <div class="signup">
+                <input type="submit" value="Save">
+                <button type="button" onclick="location.href = 'admin_dashboard.php'" >Cancel</button>
+                <br><br><br>
+            </div>
+        </form>
+    </div>
+    <script>
+
+        
+        document.getElementById('employeeForm').addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Full Name Validation
+            const fullName = document.getElementById('fullName');
+            const fullNameError = document.getElementById('fullNameError');
+            if (fullName.value.trim() === '' || fullName.value.length > 50) {
+                fullNameError.textContent = 'Full Name is required and should not exceed 50 characters.';
+                fullName.classList.add('error-border');
+                isValid = false;
+            } else {
+                fullNameError.textContent = '';
+                fullName.classList.remove('error-border');
+            }
+
+            // Address Validation
+            const address = document.getElementById('address');
+            const addressError = document.getElementById('addressError');
+            if (address.value.trim() === '' || address.value.length > 100) {
+                addressError.textContent = 'Residential Address is required and should not exceed 100 characters.';
+                address.classList.add('error-border');
+                isValid = false;
+            } else {
+                addressError.textContent = '';
+                address.classList.remove('error-border');
+            }
+
+            // Pin Code Validation
+            const pinCode = document.getElementById('pinCode');
+            const pinCodeError = document.getElementById('pinCodeError');
+            if (pinCode.value.trim() === '' || !/^\d{6}$/.test(pinCode.value)) {
+                pinCodeError.textContent = 'Valid Pin Code is required.';
+                pinCode.classList.add('error-border');
+                isValid = false;
+            } else {
+                pinCodeError.textContent = '';
+                pinCode.classList.remove('error-border');
+            }
+
+            // Date of Birth Validation
+            const dob = document.getElementById('dob');
+            const dobError = document.getElementById('dobError');
+            if (dob.value.trim() === '') {
+                dobError.textContent = 'Date of Birth is required.';
+                dob.classList.add('error-border');
+                isValid = false;
+            } else {
+                dobError.textContent = '';
+                dob.classList.remove('error-border');
+            }
+
+            // Mobile Number Validation
+            const mobile = document.getElementById('mobile');
+            const mobileError = document.getElementById('mobileError');
+            if (mobile.value.trim() === '' || !/^\d{10}$/.test(mobile.value)) {
+                mobileError.textContent = 'Valid Mobile Number is required.';
+                mobile.classList.add('error-border');
+                isValid = false;
+            } else {
+                mobileError.textContent = '';
+                mobile.classList.remove('error-border');
+            }
+
+            // Date of Joining Validation
+            const doj = document.getElementById('doj');
+            const dojError = document.getElementById('dojError');
+            if (doj.value.trim() === '') {
+                dojError.textContent = 'Date of Joining is required.';
+                doj.classList.add('error-border');
+                isValid = false;
+            } else {
+                dojError.textContent = '';
+                doj.classList.remove('error-border');
+            }
+
+            // ID Number Validation
+            const idNumber = document.getElementById('idNumber');
+            const idNumberError = document.getElementById('idNumberError');
+            if (idNumber.value.trim() === '' || idNumber.value.length > 20) {
+                idNumberError.textContent = 'ID Number is required and should not exceed 20 characters.';
+                idNumber.classList.add('error-border');
+                isValid = false;
+            } else {
+                idNumberError.textContent = '';
+                idNumber.classList.remove('error-border');
+            }
+
+            // Password Validation
+            const password = document.getElementById('password');
+            const passwordError = document.getElementById('passwordError');
+            if (password.value.trim() === '' || password.value.length < 8) {
+                passwordError.textContent = 'Password is required and should be at least 8 characters long.';
+                password.classList.add('error-border');
+                isValid = false;
+            } else {
+                passwordError.textContent = '';
+                password.classList.remove('error-border');
+            }
+
+            // Confirm Password Validation
+            const confirmPassword = document.getElementById('confirmPassword');
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            if (confirmPassword.value.trim() === '' || confirmPassword.value !== password.value) {
+                confirmPasswordError.textContent = 'Passwords do not match.';
+                confirmPassword.classList.add('error-border');
+                isValid = false;
+            } else {
+                confirmPasswordError.textContent = '';
+                confirmPassword.classList.remove('error-border');
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+
+        document.getElementById('confirmPassword').addEventListener('input', function(event) {
+            const confirmPassword = document.getElementById('confirmPassword');
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            if (confirmPassword.value.trim() === '' || confirmPassword.value !== password.value) {
+                confirmPasswordError.textContent = 'Passwords do not match.';
+                confirmPassword.classList.add('error-border');
+                isValid = false;
+            } else {
+                confirmPasswordError.textContent = '';
+                confirmPassword.classList.remove('error-border');
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function(event) {
+            const password = document.getElementById('password');
+            const passwordError = document.getElementById('passwordError');
+            if (password.value.trim() === '' || password.value.length < 8) {
+                passwordError.textContent = 'Password is required and should be at least 8 characters long.';
+                password.classList.add('error-border');
+                isValid = false;
+            } else {
+                passwordError.textContent = '';
+                password.classList.remove('error-border');
+            }
+        });
+
+        document.getElementById('idNumber').addEventListener('input', function(event) {
+            const idNumber = document.getElementById('idNumber');
+            const idNumberError = document.getElementById('idNumberError');
+            if (idNumber.value.trim() === '' || idNumber.value.length > 20) {
+                idNumberError.textContent = 'ID Number is required and should not exceed 20 characters.';
+                idNumber.classList.add('error-border');
+                isValid = false;
+            } else {
+                idNumberError.textContent = '';
+                idNumber.classList.remove('error-border');
+            }
+        });
+
+        document.getElementById('doj').addEventListener('input', function(event) {
+            const doj = document.getElementById('doj');
+            const dojError = document.getElementById('dojError');
+            if (doj.value.trim() === '') {
+                dojError.textContent = 'Date of Joining is required.';
+                doj.classList.add('error-border');
+                isValid = false;
+            } else {
+                dojError.textContent = '';
+                doj.classList.remove('error-border');
+            }
+        }); 
+
+        document.getElementById('mobile').addEventListener('input', function(event) {
+            const mobile = document.getElementById('mobile');
+            const mobileError = document.getElementById('mobileError');
+            if (mobile.value.trim() === '' || !/^\d{10}$/.test(mobile.value)) {
+                mobileError.textContent = 'Valid Mobile Number is required.';
+                mobile.classList.add('error-border');
+                isValid = false;
+            } else {
+                mobileError.textContent = '';
+                mobile.classList.remove('error-border');
+            }
+
+        });
+
+        document.getElementById('dob').addEventListener('input', function(event) {
+            const dob = document.getElementById('dob');
+            const dobError = document.getElementById('dobError');
+            if (dob.value.trim() === '') {
+                dobError.textContent = 'Date of Birth is required.';
+                dob.classList.add('error-border');
+                isValid = false;
+            } else {
+                dobError.textContent = '';
+                dob.classList.remove('error-border');
+            }
+        });
+
+        document.getElementById('pinCode').addEventListener('input', function(event) {
+            const pinCode = document.getElementById('pinCode');
+            const pinCodeError = document.getElementById('pinCodeError');
+            if (pinCode.value.trim() === '' || !/^\d{6}$/.test(pinCode.value)) {
+                pinCodeError.textContent = 'Valid Pin Code is required.';
+                pinCode.classList.add('error-border');
+                isValid = false;
+            } else {
+                pinCodeError.textContent = '';
+                pinCode.classList.remove('error-border');
+            }
+        });
+
+        document.getElementById('address').addEventListener('input', function(event) {
+                        // Address Validation
+                        const address = document.getElementById('address');
+            const addressError = document.getElementById('addressError');
+            if (address.value.trim() === '' || address.value.length > 100) {
+                addressError.textContent = 'Residential Address is required and should not exceed 100 characters.';
+                address.classList.add('error-border');
+                isValid = false;
+            } else {
+                addressError.textContent = '';
+                address.classList.remove('error-border');
+            }
+        });
+
+        document.getElementById('fullName').addEventListener('input', function(event) {
+            const fullName = document.getElementById('fullName');
+            const fullNameError = document.getElementById('fullNameError');
+            if (fullName.value.trim() === '' || fullName.value.length > 50) {
+                fullNameError.textContent = 'Full Name is required and should not exceed 50 characters.';
+                fullName.classList.add('error-border');
+                isValid = false;
+            } else {
+                fullNameError.textContent = '';
+                fullName.classList.remove('error-border');
+            }
+        });
+
+
+        // Populate districts based on state selection
+        const districts = {
+            "Andaman and Nicobar Islands" : ["Nicobar","North and Middle Andaman","South Andaman" ],
                             "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Nellore", "Prakasam", "Srikakulam", "Visakhapatnam", "Vizianagaram", "West Godavari", "Y.S.R. Kadapa"],
                             "Arunachal Pradesh": ["Tawang", "West Kameng", "East Kameng", "Papum Pare", "Kurung Kumey", "Kra Daadi", "Lower Subansiri", "Upper Subansiri", "West Siang", "East Siang", "Siang", "Upper Siang", "Lower Siang", "Lower Dibang Valley", "Dibang Valley", "Anjaw", "Lohit", "Namsai", "Changlang", "Tirap", "Longding"],
                             "Assam": ["Baksa","Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo","Chirang","Darrang", "Dhemaji","Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat","Hailakandi","Hojai", "Jorhat","Kamrup","Kamrup Metropolitan","Karbi Anglong","Karimganj","Kokrajhar","Lakhimpur","Majuli","Morigaon","Nagaon","Nalbari", "Sivasagar","Sonitpur","South Salmara-Mankachar","Tinsukia","Udalguri","West Karbi Anglong"],
@@ -107,88 +430,28 @@
                             "Uttarakhand" : ["Almora","Bageshwar","Chamoli","Champawat","Dehradun","Haridwar","Nainital","Pauri Garhwal","Pithoragarh","Rudraprayag","Tehri Garhwal","Udham Singh Nagar","Uttarkashi"],
                             "Uttar Pradesh" : ["Agra","Aligarh","Allahabad","Ambedkar Nagar","Amethi","Amroha","Auraiya","Azamgarh","Baghpat","Bahraich","Ballia","Balrampur","Banda","Barabanki","Bareilly","Basti","Bijnor","Budaun","Bulandshahr","Chandauli","Chitrakoot","Deoria","Etah","Etawah","Faizabad","Farrukhabad","Fatehpur","Firozabad","Gautam Buddh Nagar","Ghaziabad","Ghazipur","Gonda","Gorakhpur","Hamirpur","Hapur","Hardoi","Hathras","Jalaun","Jaunpur","Jhansi","Kannauj","Kanpur Dehat","Kanpur Nagar","Kasganj","Kaushambi","Kushinagar","Lakhimpur Kheri","Lalitpur","Lucknow","Maharajganj","Mahoba","Mainpuri","Mathura","Mau","Meerut","Mirzapur","Moradabad","Muzaffarnagar","Pilibhit","Pratapgarh","Raebareli","Rampur","Saharanpur","Sambhal","Sant Kabir Nagar","Shahjahanpur","Shamli","Shravasti","Siddharthnagar","Sitapur","Sonbhadra","Sultanpur","Unnao","Varanasi"],
                             "West Bengal" : ["Alipurduar","Bankura","Birbhum","Cooch Behar","Dakshin Dinajpur","Darjeeling","Hooghly","Howrah","Jalpaiguri","Jhargram","Kalimpong","Kolkata","Malda","Murshidabad","Nadia","North 24 Parganas","Paschim Bardhaman","Paschim Medinipur","Purba Bardhaman","Purba Medinipur","Purulia","South 24 Parganas","Uttar Dinajpur"],
-                        };
-                
-                        // Function to populate district options based on selected state
-                        function populateDistricts() {
-                            const stateSelect = document.getElementById("state");
-                            const districtSelect = document.getElementById("district");
-                            const selectedState = stateSelect.value;
-                
-                            // Clear existing options
-                            districtSelect.innerHTML = '<option value="" disabled hidden selected>Select District</option>';
-                
-                            // Populate district options based on selected state
-                            districts[selectedState].forEach(function(district) {
-                                const option = document.createElement("option");
-                                option.text = district;
-                                option.value = district;
-                                districtSelect.add(option);
-                            });
-                        }
-                
-                        // Event listener to trigger populateDistricts function when state selection changes
-                        document.getElementById("state").addEventListener("change", populateDistricts);
-                
-                        // Initial population of districts based on default state selection
-                        populateDistricts();
-                    </script>
-                        <input type="text" placeholder="Pin Code" required>
 
-                </div><br>
-                <div class="fields2">
-                    <div class="DOB">
-                        <input type="text" placeholder="Date of Birth" onfocus="(this.type='Date')" onblur="(this.type='text')"><br><br>
-                    </div>
-                    <input type="text" placeholder="Mobile Number"><br><br>
-                    <input type="email" placeholder="Email Id" required><br><br>
-                </div>
+        };
 
-                <div class="fields3">
-                    <input type="radio" value="Male" name="gender" id="male" required>
-                    <label for="male">Male</label>
-                    <input type="radio" value="Female" name="gender" id="female"required>
-                    <label for="female">Female</label>
-                </div>
-            </div>
-            <div class="col2">
-                <div class="fields1">
-                    <div class="DOB">
-                        <select class="qual">
-                            <option value="" disabled selected hidden>Qualification</option>
-                            <option>Matriculation</option>
-                            <option>Intermediate</option>
-                            <option>Graduate</option>
-                            <option>Post Graduate</option>
-                            <option>Ph.D</option>
-                        </select><br><br>
-                        <input type="text" placeholder="Date of Joining" onfocus="(this.type='Date')" onblur="(this.type='text')"><br><br>
-                    </div>
-                </div>
-                <div class="fields1">
-                    <select class="govt_id">
-                        <option value="" disabled selected hidden>Select Government ID</option>
-                        <option>Aadhar</option>
-                        <option>Driving Licence</option>
-                        <option>Elector Photo Identity Card</option>
-                        <option>PAN</option>
-                    </select><br><br>
-                    <input type="text" placeholder="ID Number"required><br><br>
-                    <select class="designation">
-                        <option value="" disabled selected hidden>Designation</option>
-                        <option>Loco-Pilot</option>
-                    </select><br><br>
-                    <input type="password" placeholder="Create Password" required><br><br>
-                    <input type="password" placeholder="Confirm Password" required><br><br>
-                </div>
-            </div>
-        </footer>
-            <div class="signup">
-                <input type="submit" value="Save">
-                <button type="button" onclick="location.href = 'admin_dashboard.php'" >Cancel</button>
-                <br><br><br>
-            </div>
-        </form>
-    </div>
+        function populateDistricts() {
+            const stateSelect = document.getElementById('state');
+            const districtSelect = document.getElementById('district');
+            const selectedState = stateSelect.value;
+
+            districtSelect.innerHTML = '<option value="" disabled hidden selected>Select District</option>';
+
+            if (districts[selectedState]) {
+                districts[selectedState].forEach(function(district) {
+                    const option = document.createElement('option');
+                    option.text = district;
+                    option.value = district;
+                    districtSelect.add(option);
+                });
+            }
+        }
+
+        document.getElementById('state').addEventListener('change', populateDistricts);
+        window.addEventListener('load', populateDistricts);
+    </script>
 </body>
 </html>

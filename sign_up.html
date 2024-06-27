@@ -5,25 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="sign_up.css">
     <title>Sign Up</title>
+    <style>
+        .error {
+            color: white;
+            display: none;
+        }
+        .invalid {
+            border-color: red;
+        }
+    </style>
+    <script>
+        
+        // Function to check username availability
+        function validateUsername() {
+            var username = document.getElementById('p_username').value;
+            if (username.trim() === '') {
+                document.getElementById('usernameMessage').innerHTML = 'Please enter a username.';
+                return;
+            }
+
+            // Simulate form submission to check username availability
+            var form = document.getElementById('signUpForm');
+            var formData = new FormData(form);
+
+            fetch('check_username.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('usernameMessage').innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    
 </head>
 <body>
     <div class="bg-image"></div>
     <div class="create_account">
-        <form action="sign_up.php" method="post">
-            
+        <form id="signUpForm" action="sign_up.php" method="post">
             <div class="heading">
                 <label>Create Account</label>
             </div>
-        <footer>
-            <div class="col1">
-                <div class="fields1">
-                    <input type="name" name="p_name" placeholder="Full Name" autofocus required><br><br>
-                    <input type="text" name="p_address" placeholder="Address" required><br><br>
-                </div>
-                <div class="drop_down">
-                    <select id="state" name="p_state" class="state" required>
-                        <option value="" disabled selected hidden>Select State</option>
-                        <option>Andaman and Nicobar Islands</option>
+            <footer>
+                <div class="col1">
+                    <div class="fields1">
+                        <input type="text" name="p_name" placeholder="Full Name" id="p_name" required><br>
+                        <span class="error" id="nameError">Name should be less than 60 characters</span><br>
+                        <input type="text" name="p_address" placeholder="Address" id="p_address" required><br>
+                        <span class="error" id="addressError">Address should be less than 500 characters</span><br>
+                    </div>
+                    <div class="drop_down">
+                        <select id="state" name="p_state" class="state" required>
+                            <option value="" disabled selected hidden>Select State</option>
+                            <option>Andaman and Nicobar Islands</option>
                         <option>Andhra Pradesh</option>
                         <option>Arunachal Pradesh</option>
                         <option>Assam</option>
@@ -59,13 +97,67 @@
                         <option>Uttarakhand</option>
                         <option>Uttar Pradesh</option>
                         <option>West Bengal</option>
-                    </select>
-                    <select id="district" name="p_district" class="district">
-                        <option value="" disabled selected hidden>Select District</option>
-                    </select>
-                    <script>
-                        const districts = {
-                            "Andaman and Nicobar Islands" : ["Nicobar","North and Middle Andaman","South Andaman" ],
+                        </select>
+                        <select id="district" name="p_district" class="district">
+                            <option value="" disabled selected hidden>Select District</option>
+                        </select>
+                    </div><br>
+                    <div class="fields2">
+                        <input type="text" name="p_pincode" placeholder="Pin Code" id="p_pincode" required><br>
+                        <span class="error" id="pincodeError">Please enter a valid 6-digit Pin Code</span><br>
+                        <div class="DOB">
+                            <input type="text" name="p_dob" placeholder="Date of Birth" id="p_dob" onfocus="(this.type='date')" onblur="(this.type='text')" required><br>
+                            <span class="error" id="dobError">Date of Birth is required</span><br>
+                        </div>
+                        <input type="text" name="p_mobile" placeholder="Mobile Number" id="p_mobile" required><br>
+                        <span class="error" id="mobileError">Please enter a valid 10-digit mobile number</span><br>
+                        <input type="email" name="p_email" placeholder="Email Id" id="p_email" required><br>
+                        <span class="error" id="emailError">Valid Email is required</span><br>
+                    </div>
+                </div>
+                <div class="col2">
+                    <div class="fields3">
+                        <input type="radio" value="Male" name="p_gender" id="male" required>
+                        <label for="male">Male</label>
+                        <input type="radio" value="Female" name="p_gender" id="female" required>
+                        <label for="female">Female</label>
+                        <span class="error" id="genderError">Gender is required</span>
+                    </div><br>
+                    <div class="fields1">
+                        <input type="text" name="p_username" placeholder="Create Username" id="p_username" required onblur="validateUsername()"><br>
+                        <span class="error" id="usernameError">Username should be less than 30 characters</span><div id="usernameMessage"></div><br>
+                        <input type="password" name="p_password" placeholder="Create Password" id="p_password" required><br>
+                        <span class="error" id="passwordError">Password should be more than 8 characters</span><br>
+                        <input type="password" placeholder="Confirm Password" id="p_confirm_password" required><br>
+                        <span class="error" id="confirmPasswordError">Passwords do not match</span><br>
+                    </div>
+                    <div class="sec">
+                        <select name="p_secq" id="sec_ques" required>
+                            <option value="" disabled selected hidden>Select Your Security Question</option>
+                            <option>What is Your School Name ?</option>
+                            <option>What is Your Nick Name ?</option>
+                            <option>What is Your Favourite Song ?</option>
+                        </select>
+                        <span class="error" id="secQuesError">Security Question is required</span><br><br>
+                        <input name="p_seca" type="password" placeholder="Security Answer" id="p_seca" required><br>
+                        <span class="error" id="secAnsError">Security Answer is required</span><br>
+                    </div>
+                    <div class="fields4">
+                        <input type="checkbox" value="True" name="tnc" id="tnc" required>
+                        <label for="tnc">I have read and agreed with the <a href="t&c.html" target="_blank">Terms and Conditions</a>.</label>
+                        <span class="error" id="tncError">You must agree to the terms and conditions</span><br><br><br>
+                    </div>
+                </div>
+            </footer>
+            <div class="signup">
+                <input type="submit" value="Sign Up">
+                <button onclick="location.href = 'passenger_login.html'" type="button">Cancel</button><br><br><br>
+            </div>
+        </form>
+    </div>
+    <script>
+        const districts = {
+            "Andaman and Nicobar Islands" : ["Nicobar","North and Middle Andaman","South Andaman" ],
                             "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Nellore", "Prakasam", "Srikakulam", "Visakhapatnam", "Vizianagaram", "West Godavari", "Y.S.R. Kadapa"],
                             "Arunachal Pradesh": ["Tawang", "West Kameng", "East Kameng", "Papum Pare", "Kurung Kumey", "Kra Daadi", "Lower Subansiri", "Upper Subansiri", "West Siang", "East Siang", "Siang", "Upper Siang", "Lower Siang", "Lower Dibang Valley", "Dibang Valley", "Anjaw", "Lohit", "Namsai", "Changlang", "Tirap", "Longding"],
                             "Assam": ["Baksa","Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo","Chirang","Darrang", "Dhemaji","Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat","Hailakandi","Hojai", "Jorhat","Kamrup","Kamrup Metropolitan","Karbi Anglong","Karimganj","Kokrajhar","Lakhimpur","Majuli","Morigaon","Nagaon","Nalbari", "Sivasagar","Sonitpur","South Salmara-Mankachar","Tinsukia","Udalguri","West Karbi Anglong"],
@@ -101,78 +193,302 @@
                             "Uttarakhand" : ["Almora","Bageshwar","Chamoli","Champawat","Dehradun","Haridwar","Nainital","Pauri Garhwal","Pithoragarh","Rudraprayag","Tehri Garhwal","Udham Singh Nagar","Uttarkashi"],
                             "Uttar Pradesh" : ["Agra","Aligarh","Allahabad","Ambedkar Nagar","Amethi","Amroha","Auraiya","Azamgarh","Baghpat","Bahraich","Ballia","Balrampur","Banda","Barabanki","Bareilly","Basti","Bijnor","Budaun","Bulandshahr","Chandauli","Chitrakoot","Deoria","Etah","Etawah","Faizabad","Farrukhabad","Fatehpur","Firozabad","Gautam Buddh Nagar","Ghaziabad","Ghazipur","Gonda","Gorakhpur","Hamirpur","Hapur","Hardoi","Hathras","Jalaun","Jaunpur","Jhansi","Kannauj","Kanpur Dehat","Kanpur Nagar","Kasganj","Kaushambi","Kushinagar","Lakhimpur Kheri","Lalitpur","Lucknow","Maharajganj","Mahoba","Mainpuri","Mathura","Mau","Meerut","Mirzapur","Moradabad","Muzaffarnagar","Pilibhit","Pratapgarh","Raebareli","Rampur","Saharanpur","Sambhal","Sant Kabir Nagar","Shahjahanpur","Shamli","Shravasti","Siddharthnagar","Sitapur","Sonbhadra","Sultanpur","Unnao","Varanasi"],
                             "West Bengal" : ["Alipurduar","Bankura","Birbhum","Cooch Behar","Dakshin Dinajpur","Darjeeling","Hooghly","Howrah","Jalpaiguri","Jhargram","Kalimpong","Kolkata","Malda","Murshidabad","Nadia","North 24 Parganas","Paschim Bardhaman","Paschim Medinipur","Purba Bardhaman","Purba Medinipur","Purulia","South 24 Parganas","Uttar Dinajpur"],
-                        };
-                
-                        // Function to populate district options based on selected state
-                        function populateDistricts() {
-                            const stateSelect = document.getElementById("state");
-                            const districtSelect = document.getElementById("district");
-                            const selectedState = stateSelect.value;
-                
-                            // Clear existing options
-                            districtSelect.innerHTML = '<option value="" disabled hidden selected>Select District</option>';
-                
-                            // Populate district options based on selected state
-                            districts[selectedState].forEach(function(district) {
-                                const option = document.createElement("option");
-                                option.text = district;
-                                option.value = district;
-                                districtSelect.add(option);
-                            });
-                        }
-                
-                        // Event listener to trigger populateDistricts function when state selection changes
-                        document.getElementById("state").addEventListener("change", populateDistricts);
-                
-                        // Initial population of districts based on default state selection
-                        populateDistricts();
-                    </script>
+                };
 
-                </div><br>
-                <div class="fields2">
-                    <input type="text" name="p_pincode" placeholder="Pin Code" required><br><br>
-                    <div class="DOB">
-                        <input type="text" name="p_dob" placeholder="Date of Birth" onfocus="(this.type='Date')" onblur="(this.type='text')"><br><br>
-                    </div>
-                    <input type="text" name="p_mobile" placeholder="Mobile Number"><br><br>
-                    <input type="email" name="p_email" placeholder="Email Id" required><br><br>
-                </div>
+        function populateDistricts() {
+            const stateSelect = document.getElementById("state");
+            const districtSelect = document.getElementById("district");
+            const selectedState = stateSelect.value;
 
-                
-            </div>
-            <div class="col2">
-                <div class="fields3">
-                    <input type="radio" value="Male" name="p_gender" id="male" required>
-                    <label for="male">Male</label>
-                    <input type="radio" value="Female" name="p_gender" id="female"required>
-                    <label for="female">Female</label>
-                </div><br>
-                <div class="fields1">
-                    <input type="username" name="p_username" placeholder="Create Username"required><br><br>
-                    <input type="password" name="p_password" placeholder="Create Password" required><br><br>
-                    <input type="password" placeholder="Confirm Password" required><br><br>
-                </div>
-                <div class="sec">
-                    <select name="p_secq" id="sec_ques">
-                        <option value="" disabled selected hidden>Select Your Security Question</option>
-                        <option>What is Your School Name ?</option>
-                        <option>What is Your Nick Name ?</option>
-                        <option>What is Your Favourite Song ?</option>
-                    </select><br><br>
-                    <input name="p_seca" type="password" placeholder="Security Answer" required><br><br>
-                </div>
-                <div class="fields4">
-                    <input type="checkbox" value="True" name="tnc" required>
-                    <label for="tnc">I have read and agreed with the <a href="t&c.html" target="_blank">Terms and Conditions</a>.</label><br><br><br>
-                </div>
-            </div>
+            districtSelect.innerHTML = '<option value="" disabled hidden selected>Select District</option>';
+
+            if (districts[selectedState]) {
+                districts[selectedState].forEach(function(district) {
+                    const option = document.createElement("option");
+                    option.text = district;
+                    option.value = district;
+                    districtSelect.add(option);
+                });
+            }
+        }
+
+        document.getElementById("state").addEventListener("change", populateDistricts);
+        populateDistricts();
+
+        document.getElementById("signUpForm").addEventListener("submit", function(event) {
+            let isValid = true;
+
+            // Validate Full Name
+            const name = document.getElementById("p_name");
+            const nameError = document.getElementById("nameError");
+            if (name.value.length > 60) {
+                name.classList.add("invalid");
+                nameError.style.display = "inline";
+                isValid = false;
+            } else {
+                name.classList.remove("invalid");
+                nameError.style.display = "none";
+            }
+
+            // Validate Address
+            const address = document.getElementById("p_address");
+            const addressError = document.getElementById("addressError");
+            if (address.value.length > 500) {
+                address.classList.add("invalid");
+                addressError.style.display = "inline";
+                isValid = false;
+            } else {
+                address.classList.remove("invalid");
+                addressError.style.display = "none";
+            }
+
+            // Validate Pincode
+            const pincode = document.getElementById("p_pincode");
+            const pincodeError = document.getElementById("pincodeError");
+            const pinPattern = /^[0-9]{6}$/;
+            if (!pinPattern.test(pincode.value)) {
+                pincode.classList.add("invalid");
+                pincodeError.style.display = "inline";
+                isValid = false;
+            } else {
+                pincode.classList.remove("invalid");
+                pincodeError.style.display = "none";
+            }
+
+            // Validate Date of Birth
+            const dob = document.getElementById("p_dob");
+            const dobError = document.getElementById("dobError");
             
-        </footer>
-        <div class="signup">
-            <input type="submit" value="Sign Up">
-            <button onclick="location.href = 'passenger_login.html'" type="button" >Cancel</button><br><br><br>
-        </div>
-        </form>
-    </div>
+            if (dob.value === "") {
+                dob.classList.add("invalid");
+                dobError.style.display = "inline";
+                isValid = false;
+            } else {
+                dob.classList.remove("invalid");
+                dobError.style.display = "none";
+            }
+
+            // Validate Mobile Number
+            const mobile = document.getElementById("p_mobile");
+            const mobileError = document.getElementById("mobileError");
+            const mobilePattern = /^[0-9]{10}$/;
+            
+            if (!mobilePattern.test(mobile.value)) {
+                mobile.classList.add("invalid");
+                mobileError.style.display = "inline";
+                isValid = false;
+            } else {
+                mobile.classList.remove("invalid");
+                mobileError.style.display = "none";
+            }
+
+            // Validate Email
+            const email = document.getElementById("p_email");
+            const emailError = document.getElementById("emailError");
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email.value)) {
+                email.classList.add("invalid");
+                emailError.style.display = "inline";
+                isValid = false;
+            } else {
+                email.classList.remove("invalid");
+                emailError.style.display = "none";
+            }
+
+            // Validate Gender
+            const male = document.getElementById("male");
+            const female = document.getElementById("female");
+            const genderError = document.getElementById("genderError");
+            if (!male.checked && !female.checked) {
+                genderError.style.display = "inline";
+                isValid = false;
+            } else {
+                genderError.style.display = "none";
+            }
+
+            // Validate Username
+            const username = document.getElementById("p_username");
+            const usernameError = document.getElementById("usernameError");
+            if (username.value.length > 30) {
+                username.classList.add("invalid");
+                usernameError.style.display = "inline";
+                isValid = false;
+            } else {
+                username.classList.remove("invalid");
+                usernameError.style.display = "none";
+            }
+
+            // Validate Password
+            const password = document.getElementById("p_password");
+            const passwordError = document.getElementById("passwordError");
+            const confirmPassword = document.getElementById("p_confirm_password");
+            const confirmPasswordError = document.getElementById("confirmPasswordError");
+            if (password.value === "") {
+                password.classList.add("invalid");
+                passwordError.style.display = "inline";
+                isValid = false;
+            } else {
+                password.classList.remove("invalid");
+                passwordError.style.display = "none";
+            }
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.classList.add("invalid");
+                confirmPasswordError.style.display = "inline";
+                isValid = false;
+            } else {
+                confirmPassword.classList.remove("invalid");
+                confirmPasswordError.style.display = "none";
+            }
+
+            // Validate Security Question
+            const secQues = document.getElementById("sec_ques");
+            const secQuesError = document.getElementById("secQuesError");
+            if (secQues.value === "") {
+                secQues.classList.add("invalid");
+                secQuesError.style.display = "inline";
+                isValid = false;
+            } else {
+                secQues.classList.remove("invalid");
+                secQuesError.style.display = "none";
+            }
+
+            // Validate Security Answer
+            const secAns = document.getElementById("p_seca");
+            const secAnsError = document.getElementById("secAnsError");
+            if (secAns.value === "") {
+                secAns.classList.add("invalid");
+                secAnsError.style.display = "inline";
+                isValid = false;
+            } else {
+                secAns.classList.remove("invalid");
+                secAnsError.style.display = "none";
+            }
+
+            // Validate Terms and Conditions
+            const tnc = document.getElementById("tnc");
+            const tncError = document.getElementById("tncError");
+            if (!tnc.checked) {
+                tncError.style.display = "inline";
+                isValid = false;
+            } else {
+                tncError.style.display = "none";
+            }
+
+            // Prevent form submission if validation fails
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+
+        document.getElementById("p_name").addEventListener("input", function() {
+        const name = document.getElementById("p_name");
+        const nameError = document.getElementById("nameError");
+        if (name.value.length > 60) {
+            name.classList.add("invalid");
+            nameError.style.display = "inline";
+        } else {
+            name.classList.remove("invalid");
+            nameError.style.display = "none";
+        }
+    });
+
+    document.getElementById("p_address").addEventListener("input", function() {
+        const address = document.getElementById("p_address");
+            const addressError = document.getElementById("addressError");
+            if (address.value.length > 500) {
+                address.classList.add("invalid");
+                addressError.style.display = "inline";
+                isValid = false;
+            } else {
+                address.classList.remove("invalid");
+                addressError.style.display = "none";
+            }
+    });
+
+    document.getElementById("p_pincode").addEventListener("input", function() {
+        const pincode = document.getElementById("p_pincode");
+            const pincodeError = document.getElementById("pincodeError");
+            const pinPattern = /^[0-9]{6}$/;
+            if (!pinPattern.test(pincode.value)) {
+                pincode.classList.add("invalid");
+                pincodeError.style.display = "inline";
+                isValid = false;
+            } else {
+                pincode.classList.remove("invalid");
+                pincodeError.style.display = "none";
+            }
+    });
+
+    document.getElementById("p_mobile").addEventListener("input", function() {
+        const mobile = document.getElementById("p_mobile");
+            const mobileError = document.getElementById("mobileError");
+            const mobilePattern = /^[0-9]{10}$/;
+            
+            if (!mobilePattern.test(mobile.value)) {
+                mobile.classList.add("invalid");
+                mobileError.style.display = "inline";
+                isValid = false;
+            } else {
+                mobile.classList.remove("invalid");
+                mobileError.style.display = "none";
+            }
+    });
+
+    document.getElementById("p_email").addEventListener("input", function() {
+        const email = document.getElementById("p_email");
+            const emailError = document.getElementById("emailError");
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email.value)) {
+                email.classList.add("invalid");
+                emailError.style.display = "inline";
+                isValid = false;
+            } else {
+                email.classList.remove("invalid");
+                emailError.style.display = "none";
+            }
+    });
+
+    document.getElementById("p_username").addEventListener("input", function() {
+        const username = document.getElementById("p_username");
+            const usernameError = document.getElementById("usernameError");
+            if (username.value.length > 30) {
+                username.classList.add("invalid");
+                usernameError.style.display = "inline";
+                isValid = false;
+            } else {
+                username.classList.remove("invalid");
+                usernameError.style.display = "none";
+            }
+    });
+
+    document.getElementById("p_password").addEventListener("input", function() {
+        const password = document.getElementById("p_password");
+        const passwordError = document.getElementById("passwordError");
+        if (password.value.length < 8) {
+                password.classList.add("invalid");
+                passwordError.style.display = "inline";
+                isValid = false;
+            } else {
+                password.classList.remove("invalid");
+                passwordError.style.display = "none";
+            }
+    });
+
+    document.getElementById("p_confirm_password").addEventListener("input", function() {
+        const password = document.getElementById("p_password");
+            const passwordError = document.getElementById("passwordError");
+            const confirmPassword = document.getElementById("p_confirm_password");
+            const confirmPasswordError = document.getElementById("confirmPasswordError");
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.classList.add("invalid");
+                confirmPasswordError.style.display = "inline";
+                isValid = false;
+            } else {
+                confirmPassword.classList.remove("invalid");
+                confirmPasswordError.style.display = "none";
+            }
+    });
+    
+    </script>
 </body>
 </html>

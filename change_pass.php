@@ -1,15 +1,17 @@
 <?php
     session_start();
-    $pass_username = $_SESSION["reset_username"];
+    $pass_username = $_SESSION["pass_username"];
     if(!$pass_username)  {
-        echo '<script>window.alert("Login to the System First !!!"); window.location.href="forgot_pass.html"</script>';
+        echo '<script>window.alert("Login to the System First !!!"); window.location.href="passenger_login.html"</script>';
       }
+
+    $_SESSION["reset_username"] = $pass_username;
 ?>
 
 
 <!DOCTYPE html>
     <head>
-        <title>Reset Password</title>
+        <title>Change Password</title>
         <style>
         .error {
             color: white;
@@ -19,32 +21,16 @@
             border-color: red;
         }
     </style>
-        <link rel="stylesheet" href="login_page.css">
+        <link rel="stylesheet" href="change_pass.css">
         <link rel="stylesheet" href="home.css">
     </head>
     <body>
-        <nav>
-        
-            <img src="logo.png" class="img" alt="logo">
-    
-    
-            <ul>
-                <li><a href="home.html">HOME</a></li>
-                <li><a href="#">ABOUT</a></li>
-                <li><a href="ta_login.html">AGENT</a></li>
-                <li><a href="emp_login.html">EMPLOYEE</a></li>
-                <li><a href="passenger_login.html">PASSENGER</a></li>
-                <li><a href="#">FACILITIES</a></li>
-                <li><a href="#">SCHEDULE</a></li>
-                <li><a href="#">CONTACT</a></li>
-            </ul>
-        </nav>
         <div class="background"></div>
         <div class="login_form">
-            <form id="signUpForm" method="post" action="update_pass.php">
+            <form id="signUpForm" method="post" action="change_pass_update.php">
                 <br><br>
                 <div class="lbl2">
-                    <label>Reset Password</label><br><br><br>
+                    <label>Change Password</label><br><br><br>
                 </div>
                 <div class="credentials_forgot">
                     <input type="username" name="pass_username" placeholder="<?php echo $pass_username;?>" required readonly>

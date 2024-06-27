@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="sign_up.css">
+    <script>
+        function validateUsername() {
+            var username = document.getElementById('p_username').value;
+            if (username.trim() === '') {
+                document.getElementById('usernameMessage').innerHTML = 'Please enter a username.';
+                return;
+            }
+
+            // Simulate form submission to check username availability
+            var form = document.getElementById('signupForm');
+            var formData = new FormData(form);
+
+            fetch('cu.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('usernameMessage').innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="bg-image"></div>
+    <div class="create_account">
+        <form id="signupForm" action="sign_up.php" method="post">
+            <div class="heading">
+                <label>Create Account</label>
+            </div>
+            <div class="col2">
+                <div class="fields1">
+                    <input type="text" id="p_username" name="p_username" placeholder="Create Username" required><br><div id="usernameMessage"></div><br>
+                    <input type="password" name="p_password" placeholder="Create Password" required><br><br>
+                    <input type="password" placeholder="Confirm Password" required><br><br>
+                </div>
+                <!-- Your other form fields here -->
+            </div>
+            <div class="signup">
+                <input type="button" value="Check Username" onclick="validateUsername()">
+                <!-- Change type="button" to type="submit" when ready to submit the form -->
+                <button type="button" onclick="location.href = 'passenger_login.html'">Cancel</button><br><br><br>
+            </div>
+        </form>
+         <!-- To display the username availability message -->
+    </div>
+</body>
+</html>

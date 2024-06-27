@@ -24,15 +24,15 @@
         </nav>
         <div class="background"></div>
         <div class="login_form">
-            <form action="reset_ta.php">
+            <form action="forgot_ta.php" method="post">
                 <br><br>
                 <div class="lbl2">
                     <label>Forgot Password ?</label><br><br><br>
                 </div>
                 <div class="credentials_forgot">
-                    <input type="username" placeholder="Username" required>
+                    <input type="username" name="ta_username" placeholder="Username" required>
                     <br><br><br>
-                    <select class="govt_id">
+                    <select name="ta_gov_id" class="govt_id">
                         <option value="" disabled selected hidden>Select Government ID</option>
                         <option>Aadhar</option>
                         <option>Driving Licence</option>
@@ -40,7 +40,7 @@
                         <option>PAN</option>
                     </select>
                     <br><br><br>
-                    <input type="text" placeholder="ID Number" required>
+                    <input type="text" placeholder="ID Number" name="ta_id" required>
                     <br><br><br>
                 </div>
                 <div class="submit2">

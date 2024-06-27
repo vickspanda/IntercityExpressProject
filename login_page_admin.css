@@ -22,7 +22,7 @@ body, html {
     /* Center and scale the image nicely */
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 1366px 768px;
+    background-size: 100%;
   }
 
 label {
